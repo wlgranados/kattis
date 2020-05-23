@@ -1,51 +1,48 @@
-import getopt, sys
-from requests import get
+import argparse
+import os
+import sys
+
+from bs4 import BeautifulSoup
+from requests import get, exceptions
 
 
-def import_problem_info(problem_url: str):
+def import_problem_info(problem_url: str, dir_path: str = ""):
     """
+    Import problem
+    :param problem_url: URL to kattis problem
+    :param dir_path: Path to directory for output
     :return:
     """
-    pass
+    try:
+        r = get(problem_url)
+        soup = BeautifulSoup(r.content, 'html.parser')
+        print(soup.prettify())
 
-
-def usage() -> str:
-    """
-    Provide usage guideline for script
-    :return: Usage string
-    """
-    return """Usage: 
-                    problem_importer.py --url=<input_url> --dir=<output_directory>
-                    or
-                    problem_importer.py -u <input_url> -o <output_directory>
-            """
+        if dir_path is None:
+            dir_path = os.getcwd()
+            print(dir_path)
+    except exceptions.HTTPError as err:
+        print(str(err))
 
 
 def main():
     """
     Driver function to run script
-    :param argv: Command line arguments passed into script
     """
     try:
-        optlist, args = getopt.getopt(sys.argv[1:], "hud", ['help', 'url=', 'target_dir='])
-    except getopt.GetoptError as err:
+        parser = argparse.ArgumentParser(description="Import Open Kattis problem information from given URL")
+        parser.add_argument("url=", help="The url to your Open-Kattis problem", type=str)
+        parser.add_argument("--dir", help="Directory where you want to store the output information",
+                            type=str)
+        args = vars(parser.parse_args())
+        output_dir = args["dir"]
+        problem_url = args["url="].split('=')[1]
+
+        if problem_url is not None:
+            import_problem_info(problem_url, output_dir)
+    except argparse.ArgumentError as err:
         print(str(err))
-        usage()
         sys.exit(2)
-
-    problem_url = None
-    output_dir = None
-    for opt, arg in optlist:
-        if opt in ("-h", "--help"):
-            usage()
-            sys.exit()
-        elif opt in ("-u", "--url"):
-            problem_url = arg
-        elif opt in ("-d", "--dir"):
-            output_dir = arg
-        else:
-            assert False, "unhandled option"
-
 
 
 if __name__ == "__main__":
