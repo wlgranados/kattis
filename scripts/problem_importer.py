@@ -1,8 +1,7 @@
 import argparse
 import os
 import sys
-
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, element
 from requests import get, exceptions
 
 
@@ -16,13 +15,39 @@ def import_problem_info(problem_url: str, dir_path: str = ""):
     try:
         r = get(problem_url)
         soup = BeautifulSoup(r.content, 'html.parser')
-        print(soup.prettify())
+        soup_logic(soup)
 
         if dir_path is None:
             dir_path = os.getcwd()
-            print(dir_path)
     except exceptions.HTTPError as err:
         print(str(err))
+
+
+def soup_logic(soup):
+    """
+    Logic handler to parse problems
+    :param soup: Soup object from BS4
+    :return:
+    """
+    # holds over-all problem info
+    problem_info = """"""
+    problem_sidebar_info_raw = soup.findAll("div", {"class": "sidebar-info"})[2]
+
+    # grab sidebar-info
+    for ele in problem_sidebar_info_raw.find_all("p")[:-1]:
+        problem_info += ele.text + "\n"
+
+    # grab main div content
+    problem_main_info_raw = soup.findAll("div", {"class": "problem-wrapper"})
+    for ele in problem_main_info_raw:
+        title = ele.find("div", {"class": "headline-wrapper"}).text
+        problem_info += "\nProblem: " + title + "\n"
+        body = ele.find("div", {"class": "problembody"})
+        for tag in body:
+            if tag.name != "table":
+                print(tag.get_text())
+
+    # print(problem_info)
 
 
 def main():
