@@ -1,6 +1,7 @@
 import argparse
 import os
 import sys
+from pathlib import Path
 from bs4 import BeautifulSoup
 from requests import get, exceptions
 
@@ -16,6 +17,7 @@ class ProblemImportError(Error):
     Attributes:
         message -- explanation of error
     """
+
     def __init__(self, message):
         self.message = message
 
@@ -28,6 +30,7 @@ def import_problem_info(problem_url: str, dir_path: str = ""):
     :return:
     """
     try:
+        problem_name = problem_url.split('/')[4]
         r = get(problem_url)
         soup = BeautifulSoup(r.content, 'html.parser')
         info = soup_logic(soup)
@@ -36,7 +39,8 @@ def import_problem_info(problem_url: str, dir_path: str = ""):
                                      "particular problem is having trouble getting imported")
         else:
             if dir_path is None:
-                dir_path = os.getcwd()
+                dir_path = Path(__file__).resolve().parents[1].joinpath('src', problem_name)
+                dir_path.mkdir()
                 with open(os.path.join(dir_path, "README.md"), 'w') as f:
                     f.write(info)
             else:
@@ -48,7 +52,6 @@ def import_problem_info(problem_url: str, dir_path: str = ""):
     except:
         print("Unexpected error:", sys.exc_info()[0])
         raise
-
 
 
 def soup_logic(soup):
@@ -71,7 +74,7 @@ def soup_logic(soup):
 
     # For various tags format the markdown
     for ele in problem_main_info_raw:
-        for tag in ele.find_all(["h1", "img", "p", "span", "h2","table"]):
+        for tag in ele.find_all(["h1", "img", "p", "span", "h2", "table"]):
             if tag.name == "img":
                 img_url = tag['src']
                 tag['src'] = "https://open.kattis.com" + img_url
@@ -81,8 +84,9 @@ def soup_logic(soup):
             if tag.name == "span":
                 continue
             if tag.name == "p":
-                problem_info += tag.text.replace('$','`').replace('\leq','<=').replace('\qeq','>=').replace('\ldots','...') + "\n\n"
-                #problem_info += tag.text.translate(str.maketrans({'$':'`', '\leq':'<=', '\geq': '>='})) + "\n\n"
+                problem_info += tag.text.replace('$', '`').replace('\leq', '<=').replace('\qeq', '>=').replace('\ldots',
+                                                                                                               '...') + "\n\n"
+                # problem_info += tag.text.translate(str.maketrans({'$':'`', '\leq':'<=', '\geq': '>='})) + "\n\n"
             if tag.name == "table":
                 problem_info += "\n" + str(tag) + "\n"
 
