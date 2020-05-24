@@ -1,7 +1,8 @@
 import argparse
 import os
 import sys
-from bs4 import BeautifulSoup, element
+from bs4 import BeautifulSoup
+from .custom_exceptions import ProblemImportError
 from requests import get, exceptions
 
 
@@ -13,14 +14,27 @@ def import_problem_info(problem_url: str, dir_path: str = ""):
     :return:
     """
     try:
+        problem_name = problem_url.split('/')[2]
         r = get(problem_url)
         soup = BeautifulSoup(r.content, 'html.parser')
-        soup_logic(soup)
+        info = soup_logic(soup)
+        if info == "":
+            raise ProblemImportError("Ran into an issue importing problem info: check URL, or create an issue if " +
+                                     "particular problem is having trouble getting imported")
+        else:
+            if dir_path is None:
+                dir_path = os.getcwd()
+                with open(os.path.join(dir_path, problem_name), 'w') as f:
+                    f.write(info)
+            else:
+                with open(os.path.join(dir_path, problem_name), 'w') as f:
+                    f.write(info)
 
-        if dir_path is None:
-            dir_path = os.getcwd()
     except exceptions.HTTPError as err:
         print(str(err))
+    except:
+        print("Unexpected error:", sys.exc_info()[0])
+        raise
 
 
 def soup_logic(soup):
@@ -40,14 +54,15 @@ def soup_logic(soup):
     # grab main div content
     problem_main_info_raw = soup.findAll("div", {"class": "problem-wrapper"})
     for ele in problem_main_info_raw:
-        title = ele.find("div", {"class": "headline-wrapper"}).text
-        problem_info += "\nProblem: " + title + "\n"
-        body = ele.find("div", {"class": "problembody"})
-        for tag in body:
-            if tag.name != "table":
-                print(tag.get_text())
+        for tag in ele.find_all(["h1", "img", "p", "span", "h2"]):
+            if tag.name == "img":
+                img_url = tag['src']
+                tag['src'] = "https://open.kattis.com" + img_url
+                problem_info += "\n" + str(tag) + "\n"
+            else:
+                problem_info += "\n" + tag.text + "\n"
 
-    # print(problem_info)
+    return problem_info
 
 
 def main():
