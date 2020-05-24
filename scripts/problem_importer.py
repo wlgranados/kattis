@@ -2,8 +2,22 @@ import argparse
 import os
 import sys
 from bs4 import BeautifulSoup
-from .custom_exceptions import ProblemImportError
 from requests import get, exceptions
+
+
+class Error(Exception):
+    """Base class for exceptions"""
+    pass
+
+
+class ProblemImportError(Error):
+    """Exception raised for errors with problem import
+
+    Attributes:
+        message -- explanation of error
+    """
+    def __init__(self, message):
+        self.message = message
 
 
 def import_problem_info(problem_url: str, dir_path: str = ""):
@@ -14,7 +28,7 @@ def import_problem_info(problem_url: str, dir_path: str = ""):
     :return:
     """
     try:
-        problem_name = problem_url.split('/')[2]
+        problem_name = problem_url.split('/')[4]
         r = get(problem_url)
         soup = BeautifulSoup(r.content, 'html.parser')
         info = soup_logic(soup)
@@ -24,10 +38,10 @@ def import_problem_info(problem_url: str, dir_path: str = ""):
         else:
             if dir_path is None:
                 dir_path = os.getcwd()
-                with open(os.path.join(dir_path, problem_name), 'w') as f:
+                with open(os.path.join(dir_path, problem_name+".md"), 'w') as f:
                     f.write(info)
             else:
-                with open(os.path.join(dir_path, problem_name), 'w') as f:
+                with open(os.path.join(dir_path, problem_name+".md"), 'w') as f:
                     f.write(info)
 
     except exceptions.HTTPError as err:
