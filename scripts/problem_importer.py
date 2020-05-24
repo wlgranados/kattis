@@ -28,7 +28,6 @@ def import_problem_info(problem_url: str, dir_path: str = ""):
     :return:
     """
     try:
-        problem_name = problem_url.split('/')[4]
         r = get(problem_url)
         soup = BeautifulSoup(r.content, 'html.parser')
         info = soup_logic(soup)
@@ -38,10 +37,10 @@ def import_problem_info(problem_url: str, dir_path: str = ""):
         else:
             if dir_path is None:
                 dir_path = os.getcwd()
-                with open(os.path.join(dir_path, problem_name+".md"), 'w') as f:
+                with open(os.path.join(dir_path, "README.md"), 'w') as f:
                     f.write(info)
             else:
-                with open(os.path.join(dir_path, problem_name+".md"), 'w') as f:
+                with open(os.path.join(dir_path, "README.md"), 'w') as f:
                     f.write(info)
 
     except exceptions.HTTPError as err:
