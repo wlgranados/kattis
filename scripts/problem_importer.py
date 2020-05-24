@@ -50,6 +50,7 @@ def import_problem_info(problem_url: str, dir_path: str = ""):
         raise
 
 
+
 def soup_logic(soup):
     """
     Logic handler to parse problems
@@ -57,23 +58,33 @@ def soup_logic(soup):
     :return:
     """
     # holds over-all problem info
-    problem_info = """"""
+    problem_info = ""
     problem_sidebar_info_raw = soup.findAll("div", {"class": "sidebar-info"})[2]
 
     # grab sidebar-info
     for ele in problem_sidebar_info_raw.find_all("p")[:-1]:
-        problem_info += ele.text + "\n"
+        problem_info += ele.text + "\n\n"
 
+    problem_info += "## Problem Description \n\n"
     # grab main div content
-    problem_main_info_raw = soup.findAll("div", {"class": "problem-wrapper"})
+    problem_main_info_raw = soup.findAll("div", {"class": "problembody"})
+
+    # For various tags format the markdown
     for ele in problem_main_info_raw:
-        for tag in ele.find_all(["h1", "img", "p", "span", "h2"]):
+        for tag in ele.find_all(["h1", "img", "p", "span", "h2","table"]):
             if tag.name == "img":
                 img_url = tag['src']
                 tag['src'] = "https://open.kattis.com" + img_url
+                problem_info += "\n" + str(tag) + "\n\n"
+            if tag.name == "h2":
+                problem_info += "## " + tag.text + "\n\n"
+            if tag.name == "span":
+                continue
+            if tag.name == "p":
+                problem_info += tag.text.replace('$','`').replace('\leq','<=').replace('\qeq','>=').replace('\ldots','...') + "\n\n"
+                #problem_info += tag.text.translate(str.maketrans({'$':'`', '\leq':'<=', '\geq': '>='})) + "\n\n"
+            if tag.name == "table":
                 problem_info += "\n" + str(tag) + "\n"
-            else:
-                problem_info += "\n" + tag.text + "\n"
 
     return problem_info
 
