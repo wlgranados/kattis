@@ -1,9 +1,12 @@
 Problem ID:  autori
+
 CPU Time limit:  1 second
+
 Memory limit:  1024 MB
+
 Difficulty:  1.2
 
-Autori
+## Problem Description 
 
 Great scientific discoveries are often named by the last
     names of scientists that made them. For example, the most
@@ -12,7 +15,7 @@ Great scientific discoveries are often named by the last
     Knuth-Morris-Pratt algorithm, named by Knuth, Morris and
     Pratt.
 
-Scientific papers reference earlier works a lot and it’s not
+Scientific papers reference earlier works a lot and itâ€™s not
     uncommon for one document to use two different naming
     conventions: the short variation (e.g. KMP) using only the
     first letters of authors last names and the long variation
@@ -23,21 +26,69 @@ We find mixing two conventions in one paper to be
     aesthetically unpleasing and would like you to write a program
     that will transform long variations into short.
 
-Input
+## Input
 
 The first and only line of input will contain at most
-    $100$ characters,
+    `100` characters,
     uppercase and lowercase letters of the English alphabet and
-    hyphen (‘-’ ASCII $45$). The first character will always
+    hyphen (â€˜-â€™ ASCII `45`). The first character will always
     be an uppercase letter. Hyphens will always be followed by an
     uppercase letter. All other characters will be lowercase
     letters.
 
-$100$
-
-$45$
-
-Output
+## Output
 
 The first and only line of output should contain the
     appropriate short variation.
+
+
+<table class="sample" summary="sample data">
+<tr>
+<th>Sample Input 1</th>
+<th>Sample Output 1</th>
+</tr>
+<tr>
+<td>
+<pre>Knuth-Morris-Pratt
+</pre>
+</td>
+<td>
+<pre>KMP
+</pre>
+</td>
+</tr>
+</table>
+
+<table class="sample" summary="sample data">
+<tr>
+<th>Sample Input 2</th>
+<th>Sample Output 2</th>
+</tr>
+<tr>
+<td>
+<pre>Mirko-Slavko
+</pre>
+</td>
+<td>
+<pre>MS
+</pre>
+</td>
+</tr>
+</table>
+
+<table class="sample" summary="sample data">
+<tr>
+<th>Sample Input 3</th>
+<th>Sample Output 3</th>
+</tr>
+<tr>
+<td>
+<pre>Pasko-Patak
+</pre>
+</td>
+<td>
+<pre>PP
+</pre>
+</td>
+</tr>
+</table>
