@@ -41,17 +41,25 @@ def import_problem_info(problem_url: str, dir_path: str = ""):
             if dir_path is None:
                 dir_path = Path(__file__).resolve().parents[1].joinpath('src', problem_name)
                 dir_path.mkdir()
-                with open(os.path.join(dir_path, "README.md"), 'w') as f:
-                    f.write(info)
+                write_to_file(info, dir_path)
             else:
-                with open(os.path.join(dir_path, "README.md"), 'w') as f:
-                    f.write(info)
+                write_to_file(info, dir_path)
 
     except exceptions.HTTPError as err:
         print(str(err))
     except:
         print("Unexpected error:", sys.exc_info()[0])
         raise
+
+
+def write_to_file(problem_info: str, path: str):
+    """
+    Write info to file
+    :param problem_info: str of problem info
+    :param path: path for output
+    """
+    with open(os.path.join(path, "README.md"), 'w') as f:
+        f.write(problem_info)
 
 
 def soup_logic(soup):
