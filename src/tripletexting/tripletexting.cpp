@@ -9,7 +9,7 @@ int main()
   cin >> input;
   int wordLen = input.size() / 3;
   leftPass = input.substr(0, wordLen);
-  rightPass = input.substr(input.size()-wordLen, input.size());
+  rightPass = input.substr(input.size()-wordLen, wordLen);
   if (leftPass == rightPass) {
       cout << leftPass << endl;
   } else {
