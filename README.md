@@ -6,7 +6,7 @@ Open Kattis solutions to problems in various languages
 
 To use the `problem_importer.py` script first ensure you have python installed.
 
-Set up a local python virtual environment for your kaggle solutions like in this repo, and then run `pip install -r requirements.txt`
+Set up a local python virtual environment for your kattis solutions like in this repo, and then run `pip install -r requirements.txt`
 to grab all dependencies for the script.
 
 #### Script Usage
