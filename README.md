@@ -4,7 +4,14 @@ Open Kattis solutions to problems in various languages
 
 ## Instructions
 
-To use the `problem_importer.py` script there are 2 command line arguments:
+To use the `problem_importer.py` script first ensure you have python installed.
+
+Set up a local python virtual environment for your kaggle solutions like in this repo, and then run `pip install -r requirements.txt`
+to grab all dependencies for the script.
+
+### Script Usage
+
+2 command line arguments:
 
 1. `url=<PROBLEM_URL>` : (required) used to specify the problem url.
 2. `--dir <DIR_PATH>` : (optional) used to specify directory to store files.
